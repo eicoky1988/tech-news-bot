@@ -29,4 +29,4 @@ name: Daily Tech News Push
             WECOM_CORP_SECRET: ${{ secrets.WECOM_CORP_SECRET }}     
             WECOM_AGENT_ID: ${{ secrets.WECOM_AGENT_ID }}           
             WECOM_USER_ID: ${{ secrets.WECOM_USER_ID }}             
-          run: python fetch_news.py          
+          run: python fetch_news.py   
