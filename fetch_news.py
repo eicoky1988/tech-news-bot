@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-科技资讯抓取与推送脚本 - 企业微信版本
+科技资讯抓取与推送脚本 - PushPlus 版本
 """
 
 import os
@@ -73,35 +73,22 @@ def format_markdown(news_data):
     return "\n".join(lines)
 
 
-def push_via_wecom(title, content, corp_id, corp_secret, agent_id, user_id):
-    # 获取 access_token
-    token_url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corp_id}&corpsecret={corp_secret}"
+def push_via_pushplus(title, content, token):
+    url = "http://www.pushplus.plus/send"
+    data = {
+        "token": token,
+        "title": title,
+        "content": f"# {title}\n\n{content}",
+        "template": "markdown"
+    }
     try:
-        token_response = requests.get(token_url, timeout=10)
-        access_token = token_response.json().get('access_token')
-
-        if not access_token:
-            print(f"获取 token 失败: {token_response.json()}")
-            return False
-
-        # 发送消息
-        send_url = f"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}"
-        data = {
-            "touser": user_id,
-            "msgtype": "markdown",
-            "agentid": agent_id,
-            "markdown": {
-                "content": f"# {title}\n\n{content}"
-            }
-        }
-        response = requests.post(send_url, json=data, timeout=30)
+        response = requests.post(url, json=data, timeout=30)
         result = response.json()
-
-        if result.get('errcode') == 0:
+        if result.get('code') == 200:
             print("推送成功!")
             return True
         else:
-            print(f"推送失败: {result}")
+            print(f"推送失败: {result.get('msg')}")
             return False
     except Exception as e:
         print(f"推送出错: {e}")
@@ -109,13 +96,10 @@ def push_via_wecom(title, content, corp_id, corp_secret, agent_id, user_id):
 
 
 def main():
-    corp_id = os.environ.get('WECOM_CORP_ID')
-    corp_secret = os.environ.get('WECOM_CORP_SECRET')
-    agent_id = os.environ.get('WECOM_AGENT_ID')
-    user_id = os.environ.get('WECOM_USER_ID')
+    pushplus_token = os.environ.get('PUSHPLUS_TOKEN')
 
-    if not all([corp_id, corp_secret, agent_id, user_id]):
-        print("错误: 请设置企业微信相关环境变量")
+    if not pushplus_token:
+        print("错误: 请设置 PUSHPLUS_TOKEN")
         exit(1)
 
     print("=" * 50)
@@ -135,7 +119,7 @@ def main():
     content = format_markdown(news_data)
 
     print("\n正在推送到微信...")
-    push_via_wecom(title, content, corp_id, corp_secret, agent_id, user_id)
+    push_via_pushplus(title, content, pushplus_token)
 
 
 if __name__ == "__main__":
