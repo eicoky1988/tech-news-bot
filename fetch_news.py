@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 
 RSS_FEEDS = {
-    # 科技类资讯
+    # ==================== 科技类资讯 ====================
     "Hacker News 热门": "https://hnrss.org/frontpage?points=100",
     "Hacker News 最佳": "https://hnrss.org/best",
     "GitHub Trending": "https://rsshub.app/github/trending/daily/all",
@@ -18,12 +18,32 @@ RSS_FEEDS = {
     "少数派": "https://sspai.com/feed",
     "36氪快讯": "https://rsshub.app/36kr/newsflashes",
 
-    # 家居/生活/装修类资讯
-    "好好住": "https://rsshub.app/goodgh/home/feed",
-    "一兜糖": "https://rsshub.app/yidoutang/home",
-    "小红书家居": "https://rsshub.app/xiaohongshu/user/home/decor",
-    "知乎装修话题": "https://rsshub.app/zhihu/topic/19554203",
-    "什么值得买家居": "https://rsshub.app/smzdm/baike/keyword/家居",
+    # 国外科技媒体
+    "TechCrunch": "https://techcrunch.com/feed/",
+    "The Verge": "https://www.theverge.com/rss/index.xml",
+    "Wired 连线": "https://www.wired.com/feed/rss",
+    "Ars Technica": "https://feeds.arstechnica.com/arstechnica/index",
+    "CNET 科技": "https://www.cnet.com/rss/news/",
+
+    # ==================== 设计类资讯 ====================
+    "Smashing Magazine": "https://www.smashingmagazine.com/feed/",
+    "Designboom": "https://www.designboom.com/feed/",
+    "CSS-Tricks": "https://css-tricks.com/feed/",
+
+    # ==================== 家居/生活/装修类资讯 ====================
+    "Home Designing": "https://www.home-designing.com/feed",
+    "Decoist 家居": "https://www.decoist.com/feed/",
+    "Homedit 装修": "https://www.homedit.com/feed/",
+
+    # ==================== 产品/创业/营销 ====================
+    "Product Hunt": "https://www.producthunt.com/feed",
+    "HubSpot 营销": "https://feeds.feedburner.com/HubSpotMarketing",
+
+    # ==================== 生活方式/个人成长 ====================
+    "Lifehacker 生活技巧": "https://lifehacker.com/feed/rss",
+    "Art of Manliness": "https://feeds.feedburner.com/TheArtOfManliness",
+    "Mark Manson": "https://markmanson.net/feed",
+    "99% Invisible 设计": "https://99percentinvisible.org/feed/",
 }
 
 
