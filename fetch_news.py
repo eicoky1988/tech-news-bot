@@ -10,12 +10,20 @@ from datetime import datetime, timedelta, timezone
 
 
 RSS_FEEDS = {
+    # 科技类资讯
     "Hacker News 热门": "https://hnrss.org/frontpage?points=100",
     "Hacker News 最佳": "https://hnrss.org/best",
     "GitHub Trending": "https://rsshub.app/github/trending/daily/all",
     "V2EX 热门": "https://rsshub.app/v2ex/topics/hot",
     "少数派": "https://sspai.com/feed",
     "36氪快讯": "https://rsshub.app/36kr/newsflashes",
+
+    # 家居/生活/装修类资讯
+    "好好住": "https://rsshub.app/goodgh/home/feed",
+    "一兜糖": "https://rsshub.app/yidoutang/home",
+    "小红书家居": "https://rsshub.app/xiaohongshu/user/home/decor",
+    "知乎装修话题": "https://rsshub.app/zhihu/topic/19554203",
+    "什么值得买家居": "https://rsshub.app/smzdm/baike/keyword/家居",
 }
 
 
