@@ -13,10 +13,7 @@ RSS_FEEDS = {
     # ==================== 科技类资讯 ====================
     "Hacker News 热门": "https://hnrss.org/frontpage?points=100",
     "Hacker News 最佳": "https://hnrss.org/best",
-    "GitHub Trending": "https://rsshub.app/github/trending/daily/all",
-    "V2EX 热门": "https://rsshub.app/v2ex/topics/hot",
     "少数派": "https://sspai.com/feed",
-    "36氪快讯": "https://rsshub.app/36kr/newsflashes",
 
     # 国外科技媒体
     "TechCrunch": "https://techcrunch.com/feed/",
@@ -50,6 +47,15 @@ RSS_FEEDS = {
 def parse_feed(url, hours=24):
     try:
         feed = feedparser.parse(url)
+
+        # 检查是否解析成功
+        if not feed or not hasattr(feed, 'entries') or len(feed.entries) == 0:
+            print(f"  警告: 无内容或解析失败")
+            # 打印 feed 信息用于调试
+            if hasattr(feed, 'feed'):
+                print(f"  Feed 信息: {feed.feed.get('title', 'N/A')}")
+            return []
+
         articles = []
         cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
 
@@ -68,7 +74,7 @@ def parse_feed(url, hours=24):
                 })
         return articles
     except Exception as e:
-        print(f"解析RSS出错 {url}: {e}")
+        print(f"  错误: {e}")
         return []
 
 
