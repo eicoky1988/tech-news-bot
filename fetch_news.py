@@ -6,8 +6,11 @@
 import os
 import requests
 import feedparser
+from deep_translator import GoogleTranslator
 from datetime import datetime, timedelta, timezone
 
+
+# ==================== 配置区域 ====================
 
 RSS_FEEDS = {
     # ==================== 科技类资讯 ====================
@@ -44,6 +47,8 @@ RSS_FEEDS = {
 }
 
 
+# ==================== RSS 解析 ====================
+
 def parse_feed(url, hours=24):
     try:
         feed = feedparser.parse(url)
@@ -51,7 +56,6 @@ def parse_feed(url, hours=24):
         # 检查是否解析成功
         if not feed or not hasattr(feed, 'entries') or len(feed.entries) == 0:
             print(f"  警告: 无内容或解析失败")
-            # 打印 feed 信息用于调试
             if hasattr(feed, 'feed'):
                 print(f"  Feed 信息: {feed.feed.get('title', 'N/A')}")
             return []
@@ -89,6 +93,19 @@ def fetch_all_news():
     return all_news
 
 
+# ==================== 翻译功能 ====================
+
+def translate_text(text):
+    try:
+        translated = GoogleTranslator(source='auto', target='zh-CN').translate(text)
+        return translated if translated else text
+    except Exception as e:
+        print(f"  翻译失败: {e}")
+        return text
+
+
+# ==================== 格式化 ====================
+
 def format_markdown(news_data):
     if not news_data:
         return "今日暂无新资讯"
@@ -98,7 +115,7 @@ def format_markdown(news_data):
         lines.append(f"## {source}")
         lines.append("")
         for i, article in enumerate(articles[:10], 1):
-            title = article['title'].replace('[', '【').replace(']', '】')
+            title = translate_text(article['title']).replace('[', '【').replace(']', '】')
             lines.append(f"{i}. [{title}]({article['link']})")
             lines.append(f"   _{article['published']}_")
             lines.append("")
@@ -106,6 +123,8 @@ def format_markdown(news_data):
         lines.append("")
     return "\n".join(lines)
 
+
+# ==================== PushPlus 推送 ====================
 
 def push_via_pushplus(title, content, token):
     url = "http://www.pushplus.plus/send"
@@ -128,6 +147,8 @@ def push_via_pushplus(title, content, token):
         print(f"推送出错: {e}")
         return False
 
+
+# ==================== 主程序 ====================
 
 def main():
     pushplus_token = os.environ.get('PUSHPLUS_TOKEN')
