@@ -145,14 +145,13 @@ def format_markdown(news_data):
     for source, articles in news_data.items():
         lines.append(f"## {translate_source_name(source)}")
         lines.append("")
-        for i, article in enumerate(articles[:10], 1):
+        for i, article in enumerate(articles[:5], 1):
             title = translate_text(article['title']).replace('[', '【').replace(']', '】')
             lines.append(f"### {i}. {title}")
             if article.get('summary'):
                 summary = translate_text(article['summary']).replace('[', '【').replace(']', '】')
-                lines.append(f"> {summary[:200]}...")
+                lines.append(f"> {summary[:100]}...")
             lines.append(f"   - [阅读原文]({article['link']})")
-            lines.append(f"   - {article['published']}")
             lines.append("")
         lines.append("---")
         lines.append("")
