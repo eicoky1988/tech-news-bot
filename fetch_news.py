@@ -71,9 +71,11 @@ def parse_feed(url, hours=24):
                 published = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
 
             if published is None or published > cutoff_time:
+                summary = entry.get('summary') or entry.get('description', '')[:300]
                 articles.append({
                     'title': entry.get('title', '无标题'),
                     'link': entry.get('link', ''),
+                    'summary': summary,
                     'published': published.strftime('%m-%d %H:%M') if published else '未知时间'
                 })
         return articles
@@ -95,6 +97,29 @@ def fetch_all_news():
 
 # ==================== 翻译功能 ====================
 
+SOURCE_NAMES = {
+    "TechCrunch": "科技Crunch",
+    "The Verge": "The Verge",
+    "Wired 连线": "连线",
+    "Ars Technica": "Ars Technica",
+    "CNET 科技": "CNET 科技",
+    "Smashing Magazine": "Smashing Magazine",
+    "Designboom": "Designboom",
+    "CSS-Tricks": "CSS技巧",
+    "Home Designing": "家居设计",
+    "Decoist 家居": "Decoist",
+    "Homedit 装修": "Homedit",
+    "Product Hunt": "产品狩猎",
+    "HubSpot 营销": "HubSpot",
+    "Lifehacker 生活技巧": "生活黑客",
+    "Art of Manliness": "男性气概",
+    "Mark Manson": "马克·曼森",
+    "99% Invisible 设计": "99%不可见",
+    "Hacker News 热门": "Hacker News",
+    "Hacker News 最佳": "Hacker News",
+}
+
+
 def translate_text(text):
     try:
         translated = GoogleTranslator(source='auto', target='zh-CN').translate(text)
@@ -102,6 +127,12 @@ def translate_text(text):
     except Exception as e:
         print(f"  翻译失败: {e}")
         return text
+
+
+def translate_source_name(name):
+    if name in SOURCE_NAMES:
+        return SOURCE_NAMES[name]
+    return name
 
 
 # ==================== 格式化 ====================
@@ -112,12 +143,16 @@ def format_markdown(news_data):
 
     lines = []
     for source, articles in news_data.items():
-        lines.append(f"## {source}")
+        lines.append(f"## {translate_source_name(source)}")
         lines.append("")
         for i, article in enumerate(articles[:10], 1):
             title = translate_text(article['title']).replace('[', '【').replace(']', '】')
-            lines.append(f"{i}. [{title}]({article['link']})")
-            lines.append(f"   _{article['published']}_")
+            lines.append(f"### {i}. {title}")
+            if article.get('summary'):
+                summary = translate_text(article['summary']).replace('[', '【').replace(']', '】')
+                lines.append(f"> {summary[:200]}...")
+            lines.append(f"   - [阅读原文]({article['link']})")
+            lines.append(f"   - {article['published']}")
             lines.append("")
         lines.append("---")
         lines.append("")
