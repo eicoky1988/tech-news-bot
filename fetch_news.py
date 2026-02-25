@@ -167,11 +167,16 @@ def push_via_pushplus(title, content, token):
         "token": token,
         "title": title,
         "content": f"# {title}\n\n{content}",
-        "template": "markdown"
+        "template": "markdown",
+        "channel": "wechat"
     }
+    print(f"推送内容长度: {len(content)} 字符")
+    print(f"推送目标: {url}")
     try:
         response = requests.post(url, json=data, timeout=30)
+        print(f"响应状态码: {response.status_code}")
         result = response.json()
+        print(f"响应内容: {result}")
         if result.get('code') == 200:
             print("推送成功!")
             return True
