@@ -24,26 +24,27 @@ RSS_FEEDS = {
     "Wired 连线": "https://www.wired.com/feed/rss",
     "Ars Technica": "https://feeds.arstechnica.com/arstechnica/index",
     "CNET 科技": "https://www.cnet.com/rss/news/",
-
+    
     # ==================== 设计类资讯 ====================
     "Smashing Magazine": "https://www.smashingmagazine.com/feed/",
     "Designboom": "https://www.designboom.com/feed/",
     "CSS-Tricks": "https://css-tricks.com/feed/",
-
+    
     # ==================== 家居/生活/装修类资讯 ====================
     "Home Designing": "https://www.home-designing.com/feed",
     "Decoist 家居": "https://www.decoist.com/feed/",
     "Homedit 装修": "https://www.homedit.com/feed/",
-
+    
     # ==================== 产品/创业/营销 ====================
     "Product Hunt": "https://www.producthunt.com/feed",
     "HubSpot 营销": "https://feeds.feedburner.com/HubSpotMarketing",
-
+    
     # ==================== 生活方式/个人成长 ====================
     "Lifehacker 生活技巧": "https://lifehacker.com/feed/rss",
     "Art of Manliness": "https://feeds.feedburner.com/TheArtOfManliness",
     "Mark Manson": "https://markmanson.net/feed",
     "99% Invisible 设计": "https://99percentinvisible.org/feed/",
+
 }
 
 
@@ -59,17 +60,17 @@ def parse_feed(url, hours=24):
             if hasattr(feed, 'feed'):
                 print(f"  Feed 信息: {feed.feed.get('title', 'N/A')}")
             return []
-
+    
         articles = []
         cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
-
+    
         for entry in feed.entries[:20]:
             published = None
             if hasattr(entry, 'published_parsed') and entry.published_parsed:
                 published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
             elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
                 published = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
-
+    
             if published is None or published > cutoff_time:
                 summary = entry.get('summary') or entry.get('description', '')[:300]
                 articles.append({
@@ -145,15 +146,11 @@ def format_markdown(news_data):
     for source, articles in news_data.items():
         lines.append(f"## {translate_source_name(source)}")
         lines.append("")
-        for i, article in enumerate(articles[:5], 1):
+        for i, article in enumerate(articles[:3], 1):
             title = translate_text(article['title']).replace('[', '【').replace(']', '】')
-            lines.append(f"### {i}. {title}")
-            if article.get('summary'):
-                summary = translate_text(article['summary']).replace('[', '【').replace(']', '】')
-                lines.append(f"> {summary[:100]}...")
-            lines.append(f"   - [阅读原文]({article['link']})")
+            lines.append(f"- {title}")
+            lines.append(f"  [阅读原文]({article['link']})")
             lines.append("")
-        lines.append("---")
         lines.append("")
     return "\n".join(lines)
 
@@ -195,23 +192,23 @@ def main():
     if not pushplus_token:
         print("错误: 请设置 PUSHPLUS_TOKEN")
         exit(1)
-
+    
     print("=" * 50)
     print(f"开始抓取科技资讯 - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 50)
-
+    
     news_data = fetch_all_news()
     total_count = sum(len(articles) for articles in news_data.values())
     print(f"\n共抓取 {total_count} 条资讯")
-
+    
     if total_count == 0:
         print("无新资讯，跳过推送")
         return
-
+    
     today = datetime.now().strftime('%m月%d日')
     title = f"{today}科技资讯速递"
     content = format_markdown(news_data)
-
+    
     print("\n正在推送到微信...")
     push_via_pushplus(title, content, pushplus_token)
 
